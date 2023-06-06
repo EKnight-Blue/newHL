@@ -58,7 +58,7 @@ class Controls:
     async def micro_loop(self):
         while self.running:
             self.manager.scan()
-            await asyncio.sleep(0)
+            await asyncio.sleep(0.5)
 
     async def mainloop(self):
         await asyncio.gather(self.event_loop(), self.micro_loop())
