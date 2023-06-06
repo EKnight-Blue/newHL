@@ -15,7 +15,9 @@ class Controller:
     def get_events(self):
         print("Getting events")
         while not self.queue.empty():
-            yield self.queue.get()
+            event = self.queue.get()
+            print(event)
+            yield event
 
     def start(self):
         self.controllerButtonsProcess.start()
