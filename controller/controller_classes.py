@@ -29,6 +29,9 @@ class ControllerButtons:
         return await asyncio.to_thread(self.read, f)
 
     async def mainloop(self):
-        with open(self.file, 'rb') as f:
-            while self.running:
-                self.queue.append(Event(*await self.get_event(f)))
+        try:
+            with open(self.file, 'rb') as f:
+                while self.running:
+                    self.queue.append(Event(*await self.get_event(f)))
+        except KeyboardInterrupt:
+            pass

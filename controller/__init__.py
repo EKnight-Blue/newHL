@@ -11,15 +11,18 @@ class Controller:
         self.buttons = ControllerButtons(joystick_file)
 
     def get_events(self):
-        yield from self.buttons.queue
+        q = self.buttons.queue
         self.buttons.queue = []
+        return q
 
 
 async def read(c: Controller):
     try:
         while True:
-            print(*c.get_events(), sep='\n')
-            await asyncio.sleep(1.)
+            events = c.get_events()
+            if events:
+                print(*events, sep='\n')
+            await asyncio.sleep(.1)
     except KeyboardInterrupt:
         c.buttons.running = False
 
@@ -29,4 +32,7 @@ async def main():
     await asyncio.gather(c.buttons.mainloop(), read(c))
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
