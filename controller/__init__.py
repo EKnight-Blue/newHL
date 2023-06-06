@@ -14,7 +14,7 @@ class Event:
         return EVENT_FORMAT.format(EVENT_TYPES[self.type], BUTTONS.get((self.type, self.button), ""), self.value)
 
 
-class ControllerButtons:
+class Controller:
     running = True
     event_format = '3Bh2b'
     event_length = struct.calcsize(event_format)
@@ -28,14 +28,9 @@ class ControllerButtons:
     async def get_event(self, file):
         return await asyncio.to_thread(self.read, file)
 
-    async def mainloop(self):
-        with open(self.file, 'rb') as file:
-            while self.running:
-                self.queue.append(Event(*await self.get_event(file)))
-
 
 if __name__ == '__main__':
-    c = ControllerButtons()
+    c = Controller()
     with open(c.file, 'rb') as f:
         while True:
             print(Event(*c.read(f)))

@@ -20,6 +20,7 @@ class Manager:
 
         self.serials = tuple(
             self.micro(serial.Serial(usb.device, BAUD_RATE, writeTimeout=0), self) for usb in comports()
+            if 'AMA' not in usb.device
         )
 
         for s in self.serials:
