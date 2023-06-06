@@ -25,8 +25,8 @@ class Controller:
     def read(self, file):
         return struct.unpack(self.event_format, file.read(self.event_length))[:2:-1]
 
-    # async def get_event(self, file):
-    #     return await asyncio.to_thread(self.read, file)
+    async def get_event(self, file):
+        return await asyncio.to_thread(self.read, file)
 
 
 if __name__ == '__main__':

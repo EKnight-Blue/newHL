@@ -1,3 +1,5 @@
+import asyncio
+
 from controller import Controller, Event
 from controller.consts import *
 from micro import Manager, Micro
@@ -5,6 +7,8 @@ from constants import *
 
 
 class Controls:
+    running = True
+
     def __init__(self):
         self.controller = Controller()
         self.manager = Manager(Micro)
@@ -44,12 +48,21 @@ class Controls:
         (DIGITAL, OPTIONS): 'options'
     }
 
-    def mainloop(self):
+    async def event_loop(self):
         with open(self.controller.file, 'rb') as f:
-            while True:
-                res = self.controller.read(f)
+            while self.running:
+                res = await self.controller.get_event(f)
                 event = Event(*res)
                 getattr(self, self.manage_events.get((event.type, event.button), 'nothing'))(event)
 
+    async def micro_loop(self):
+        while self.running:
+            self.manager.scan()
+            await asyncio.sleep(0)
 
-Controls().mainloop()
+    async def mainloop(self):
+        await asyncio.gather(self.mainloop(), self.micro_loop())
+
+
+if __name__ == '__main__':
+    asyncio.run(Controls().mainloop())
