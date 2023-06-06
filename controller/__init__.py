@@ -12,6 +12,7 @@ class Controller:
 
     def get_events(self):
         yield from self.buttons.queue
+        self.buttons.queue = []
 
 
 async def read(c: Controller):
