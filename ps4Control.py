@@ -61,7 +61,7 @@ class Controls:
             await asyncio.sleep(0)
 
     async def mainloop(self):
-        await asyncio.gather(self.mainloop(), self.micro_loop())
+        await asyncio.gather(self.event_loop(), self.micro_loop())
 
 
 if __name__ == '__main__':
