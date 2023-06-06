@@ -38,4 +38,4 @@ if __name__ == '__main__':
     c = ControllerButtons()
     with open(c.file, 'rb') as f:
         while True:
-            print(c.read(f))
+            print(Event(*c.read(f)))
