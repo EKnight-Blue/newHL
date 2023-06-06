@@ -20,6 +20,8 @@ class Controls:
         self.manager.send(RAW, 0, (left << 16) | right)
 
         self.manager.scan()
+        self.manager.scan()
+        self.manager.scan()
 
     def nothing(self, event):
         pass
