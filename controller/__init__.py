@@ -1,5 +1,5 @@
 from multiprocessing import Process, SimpleQueue
-from controller.controller_classes import ControllerButtons, ControllerMouse
+from controller_classes import ControllerButtons, ControllerMouse
 
 
 class Controller:
