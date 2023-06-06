@@ -19,6 +19,8 @@ class Controls:
         left = self.manager.comp_2(left)
         self.manager.send(RAW, 0, (left << 16) | right)
 
+        self.manager.scan()
+
     def nothing(self, event):
         pass
 
@@ -39,9 +41,7 @@ class Controls:
         with open(self.controller.file, 'rb') as f:
             while True:
                 res = self.controller.read(f)
-                print(res)
                 event = Event(*res)
-                # print(event)
                 getattr(self, self.manage_events.get((event.type, event.button), 'nothing'))(event)
 
 
