@@ -1,6 +1,6 @@
 import struct
 import asyncio
-from controller.consts import *
+from consts import *
 
 
 class Event:
