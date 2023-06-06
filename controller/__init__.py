@@ -37,4 +37,5 @@ class ControllerButtons:
 if __name__ == '__main__':
     c = ControllerButtons()
     with open(c.file, 'rb') as f:
-        print(c.read(f))
+        while True:
+            print(c.read(f))
