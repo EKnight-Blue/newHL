@@ -54,6 +54,7 @@ class Controls:
                 res = await self.controller.get_event(f)
                 event = Event(*res)
                 getattr(self, self.manage_events.get((event.type, event.button), 'nothing'))(event)
+        self.manager.send(RAW, 0, 0)
 
     async def micro_loop(self):
         while self.running:
