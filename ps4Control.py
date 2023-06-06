@@ -22,6 +22,8 @@ class Controls:
         left = left + 800 * (left > 0) - 800 * (left < 0)
         left = self.manager.comp_2(left)
         self.manager.send(RAW, 0, (left << 16) | right)
+        self.manager.scan()
+        self.manager.scan()
 
     def stop(self, event):
         self.running = False
