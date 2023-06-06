@@ -15,9 +15,12 @@ class Controller:
 
 
 async def read(c: Controller):
-    while True:
-        print(*c.get_events(), sep='\n')
-        await asyncio.sleep(1.)
+    try:
+        while True:
+            print(*c.get_events(), sep='\n')
+            await asyncio.sleep(1.)
+    except KeyboardInterrupt:
+        c.buttons.running = False
 
 
 async def main():
