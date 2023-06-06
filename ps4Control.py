@@ -23,9 +23,8 @@ class Controls:
         left = self.manager.comp_2(left)
         self.manager.send(RAW, 0, (left << 16) | right)
 
-        self.manager.scan()
-        self.manager.scan()
-        self.manager.scan()
+    def stop(self, event):
+        self.running = False
 
     def nothing(self, event):
         pass
@@ -45,7 +44,8 @@ class Controls:
     manage_events = {
         (ANALOG, LY): 'distance',
         (ANALOG, RX): 'direction',
-        (DIGITAL, OPTIONS): 'options'
+        (DIGITAL, OPTIONS): 'options',
+        (DIGITAL, PS): 'stop'
     }
 
     async def event_loop(self):
