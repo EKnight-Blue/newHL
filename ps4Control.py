@@ -34,8 +34,8 @@ class Controls:
     }
 
     def mainloop(self):
-        while True:
-            with open(self.controller.file, 'rb') as f:
+        with open(self.controller.file, 'rb') as f:
+            while True:
                 res = self.controller.read(f)
                 print(res)
                 event = Event(*res)
