@@ -24,6 +24,10 @@ class Controls:
     def nothing(self, event):
         pass
 
+    def options(self, event):
+        if event.value:
+            self.manager.log_level = (self.manager.log_level + 1) % len(LEVELS)
+
     def distance(self, event: Event):
         self.dist = event.value
         self.send()
@@ -34,7 +38,8 @@ class Controls:
 
     manage_events = {
         (ANALOG, LY): 'distance',
-        (ANALOG, RX): 'direction'
+        (ANALOG, RX): 'direction',
+        (DIGITAL, OPTIONS): 'options'
     }
 
     def mainloop(self):
