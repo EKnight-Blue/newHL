@@ -10,6 +10,32 @@ class Manager:
     log_level = LOW
     serials: tuple = ()
 
+    @staticmethod
+    def within_bits(x, bits, comp2=False):
+        return 0 <= x + comp2 * (1 << bits - 1) < (1 << bits)
+
+    @classmethod
+    def comp_2(cls, x, bits=16):
+        if not cls.within_bits(x, bits, True):
+            raise ValueError(f"{x} is out bounds for a {bits} bits signed integer")
+        return x + (x < 0) * (1 << bits)
+
+    @classmethod
+    def de_comp_2(cls, x, bits=16):
+        if not cls.within_bits(x, bits):
+            raise ValueError(f"{x} is out bounds for a {bits} bits integer")
+        return x - ((x >> bits - 1) & 1) * (1 << bits)
+
+    @staticmethod
+    def float_to_int(num):
+        # integer from the IEEE-754 representation of a float
+        return sum(b << (8 * i) for i, b in enumerate(struct.pack('f', num)))
+
+    @staticmethod
+    def bytes_to_float(buffer):
+        # float from its IEEE-754 representation with bytes
+        return struct.unpack('!f', buffer)[0]
+
     def __init__(self, micro: type):
         self.micro = micro
         self.reset()

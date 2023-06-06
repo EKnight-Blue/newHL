@@ -13,8 +13,10 @@ class Controls:
     def send(self):
         right = (self.dist + self.dir) // 16
         right = right + 800 * (right > 0) - 800 * (right < 0)
+        right = self.manager.comp_2(right)
         left = (self.dist - self.dir) // 16
         left = left + 800 * (left > 0) - 800 * (left < 0)
+        left = self.manager.comp_2(left)
         self.manager.send(RAW, 0, (left << 16) | right)
 
     def nothing(self, event):
