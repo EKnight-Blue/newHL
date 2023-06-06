@@ -3,6 +3,7 @@ from controller.consts import *
 from micro import Manager, Micro
 from constants import *
 
+
 class Controls:
     def __init__(self):
         self.controller = Controller()
@@ -36,3 +37,6 @@ class Controls:
         with open(self.controller.file, 'rb') as f:
             event = self.controller.get_event(f)
             getattr(self, self.manage_events.get((event.type, event.button), 'nothing'))(event)
+
+
+Controls().mainloop()
