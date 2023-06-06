@@ -1,5 +1,5 @@
-from multiprocessing import Process, SimpleQueue
-from controller_classes import ControllerButtons, ControllerMouse
+from controller_classes import ControllerButtons
+import asyncio
 
 
 class Controller:
@@ -7,33 +7,22 @@ class Controller:
     Tool to get events from a ps4 controller, works on UNIX
     """
     
-    def __init__(self, joystick_file='/dev/input/js0', mouse_file='/dev/input/mouse0'):
-        self.queue = SimpleQueue()
-        print(self.queue)
-        self.controllerButtonsProcess = Process(target=ControllerButtons(self.queue, joystick_file).mainloop)
-        self.controllerMouseProcess = Process(target=ControllerMouse(self.queue, mouse_file).mainloop)
+    def __init__(self, joystick_file='/dev/input/js0'):
+        self.buttons = ControllerButtons(joystick_file)
 
     def get_events(self):
-        print("Getting events")
-        while not self.queue.empty():
-            event = self.queue.get()
-            print(event)
-            yield event
+        yield from self.buttons.queue
 
-    def start(self):
-        self.controllerButtonsProcess.start()
-        self.controllerMouseProcess.start()
 
-    def terminate(self):
-        self.controllerMouseProcess.terminate()
-        self.controllerButtonsProcess.terminate()
+async def read(c: Controller):
+    while True:
+        print(*c.get_events(), sep='\n')
+        await asyncio.sleep(1.)
 
+
+async def main():
+    c = Controller()
+    await asyncio.gather(c.buttons.mainloop(), read(c))
 
 if __name__ == '__main__':
-    c = Controller()
-    c.start()
-    try:
-        for ev in c.get_events():
-            print(ev)
-    except KeyboardInterrupt:
-        c.terminate()
+    asyncio.run(main())

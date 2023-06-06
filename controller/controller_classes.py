@@ -1,4 +1,5 @@
 import struct
+import asyncio
 from consts import *
 
 
@@ -14,42 +15,20 @@ class Event:
 
 
 class ControllerButtons:
+    running = True
     event_format = '3Bh2b'
     event_length = struct.calcsize(event_format)
 
-    def __init__(self, queue, location):
-        self.file, self.queue = location, queue
-        print(queue)
+    def __init__(self, location):
+        self.file, self.queue = location, []
 
-    def mainloop(self):
-        try:
-            with open(self.file, 'rb') as f:
-                while True:
-                    res = struct.unpack(self.event_format, f.read(self.event_length))
-                    print(res)
-                    # read will block, that's why i use processes
-                    self.queue.put(Event(*res[:2:-1]))
-        except KeyboardInterrupt:
-            print('Terminated Controller Process')
+    def read(self, f):
+        return struct.unpack(self.event_format, f.read(self.event_length))[:2:-1]
 
+    async def get_event(self, f):
+        return await asyncio.to_thread(self.read, f)
 
-class ControllerMouse:
-    event_length = 3
-
-    def __init__(self, queue, location):
-        self.file, self.queue = location, queue
-        self.pad_state = 0
-
-    def mainloop(self):
-        try:
-            with open(self.file, 'rb') as f:
-                while True:
-                    # will block, that's why i use processes
-                    h, dx, dy = f.read(self.event_length)
-                    if (h & 1) ^ self.pad_state:
-                        self.pad_state = h & 1
-                        self.queue.put(Event(h & 1, 3, None))
-                    # Two's complement on x and y displacements
-                    self.queue.put(Event(h & 1, 3, ((dx - 256 if dx > 128 else dx), dy - 256 if dy > 128 else dy)))
-        except KeyboardInterrupt:
-            print('Terminated Mouse Process')
+    async def mainloop(self):
+        with open(self.file, 'rb') as f:
+            while self.running:
+                self.queue.append(Event(*await self.get_event(f)))
