@@ -34,9 +34,10 @@ class Controls:
     }
 
     def mainloop(self):
-        with open(self.controller.file, 'rb') as f:
-            event = Event(*self.controller.read(f))
-            getattr(self, self.manage_events.get((event.type, event.button), 'nothing'))(event)
+        while True:
+            with open(self.controller.file, 'rb') as f:
+                event = Event(*self.controller.read(f))
+                getattr(self, self.manage_events.get((event.type, event.button), 'nothing'))(event)
 
 
 Controls().mainloop()
