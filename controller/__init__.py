@@ -13,6 +13,7 @@ class Controller:
         self.controllerMouseProcess = Process(target=ControllerMouse(self.queue, mouse_file).mainloop)
 
     def get_events(self):
+        print("Getting events")
         while not self.queue.empty():
             yield self.queue.get()
 
