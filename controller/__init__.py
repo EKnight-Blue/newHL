@@ -1,38 +1,40 @@
-from controller_classes import ControllerButtons
+import struct
 import asyncio
+from consts import *
 
 
-class Controller:
-    """
-    Tool to get events from a ps4 controller, works on UNIX
-    """
-    
+class Event:
+    # fixes the attributes
+    __slots__ = 'button', 'type', 'value'
+
+    def __init__(self, button, type_, value):
+        self.button, self.type, self.value = button, 0 if type_ < 0 else type_, value
+
+    def __repr__(self):
+        return EVENT_FORMAT.format(EVENT_TYPES[self.type], BUTTONS.get((self.type, self.button), ""), self.value)
+
+
+class ControllerButtons:
+    running = True
+    event_format = '3Bh2b'
+    event_length = struct.calcsize(event_format)
+
     def __init__(self, joystick_file='/dev/input/js0'):
-        self.buttons = ControllerButtons(joystick_file)
+        self.file, self.queue = joystick_file, []
 
-    def get_events(self):
-        q = self.buttons.queue
-        self.buttons.queue = []
-        return q
+    def read(self, file):
+        return struct.unpack(self.event_format, file.read(self.event_length))[:2:-1]
 
+    async def get_event(self, file):
+        return await asyncio.to_thread(self.read, file)
 
-async def read(c: Controller):
-    try:
-        while True:
-            events = c.get_events()
-            if events:
-                print(*events, sep='\n')
-            await asyncio.sleep(.1)
-    except KeyboardInterrupt:
-        c.buttons.running = False
+    async def mainloop(self):
+        with open(self.file, 'rb') as file:
+            while self.running:
+                self.queue.append(Event(*await self.get_event(file)))
 
-
-async def main():
-    c = Controller()
-    await asyncio.gather(c.buttons.mainloop(), read(c))
 
 if __name__ == '__main__':
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
+    c = ControllerButtons()
+    with open(c.file, 'rb') as f:
+        print(c.read(f))
