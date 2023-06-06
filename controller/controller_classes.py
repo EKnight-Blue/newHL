@@ -19,6 +19,7 @@ class ControllerButtons:
 
     def __init__(self, queue, location):
         self.file, self.queue = location, queue
+        print(queue)
 
     def mainloop(self):
         try:

@@ -9,6 +9,7 @@ class Controller:
     
     def __init__(self, joystick_file='/dev/input/js0', mouse_file='/dev/input/mouse0'):
         self.queue = SimpleQueue()
+        print(self.queue)
         self.controllerButtonsProcess = Process(target=ControllerButtons(self.queue, joystick_file).mainloop)
         self.controllerMouseProcess = Process(target=ControllerMouse(self.queue, mouse_file).mainloop)
 
